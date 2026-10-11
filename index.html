@@ -1,0 +1,1998 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="IBM AI Telemetry & Operations Dashboard — Enterprise AI Monitoring System"
+    />
+    <title>AI Telemetry &amp; Ops — IBM Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════
+       SIDEBAR COLLAPSE TOGGLE
+  ═══════════════════════════════════════════════ -->
+    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input" />
+
+    <!-- ═══════════════════════════════════════════════
+       DEPLOY MODAL TOGGLE (CSS-only, no JS)
+  ═══════════════════════════════════════════════ -->
+    <input
+      type="checkbox"
+      id="deploy-modal-toggle"
+      class="modal-toggle-input"
+    />
+
+    <!-- ═══════════════════════════════════════════════
+       TOAST TOGGLE (CSS-only, no JS)
+       Checked by "Start Deployment" label — drives
+       the success toast visibility + auto-dismiss.
+       When toast is :checked the modal-overlay is also
+       hidden (sibling rule in CSS).
+  ═══════════════════════════════════════════════ -->
+    <input type="checkbox" id="toast-toggle" class="toast-toggle-input" />
+
+    <!-- ═══════════════════════════════════════════════
+       NAVIGATION RADIO INPUTS  (tab switcher — no JS)
+       Must be siblings of .sidebar AND .main-wrapper
+       so the general sibling combinator (~) reaches both.
+  ═══════════════════════════════════════════════ -->
+    <input
+      type="radio"
+      name="nav"
+      id="nav-overview"
+      class="nav-radio"
+      checked
+    />
+    <input type="radio" name="nav" id="nav-models" class="nav-radio" />
+    <input type="radio" name="nav" id="nav-telemetry" class="nav-radio" />
+    <input type="radio" name="nav" id="nav-deployments" class="nav-radio" />
+    <input type="radio" name="nav" id="nav-logs" class="nav-radio" />
+    <input type="radio" name="nav" id="nav-incidents" class="nav-radio" />
+    <input type="radio" name="nav" id="nav-settings" class="nav-radio" />
+
+    <!-- ═══════════════════════════════════════════════
+       SIDEBAR NAVIGATION
+  ═══════════════════════════════════════════════ -->
+    <aside class="sidebar" role="navigation" aria-label="Primary navigation">
+      <!-- Sidebar header / collapse control -->
+      <div class="sidebar__header">
+        <span class="sidebar__logo" aria-hidden="true">
+          <span class="logo-mark">⬡</span>
+          <span class="logo-text">IBM&nbsp;AI&nbsp;OPS</span>
+        </span>
+        <label
+          for="sidebar-toggle"
+          class="sidebar__collapse-btn"
+          aria-label="Toggle sidebar"
+          title="Collapse sidebar"
+        >
+          <span class="collapse-icon"></span>
+        </label>
+      </div>
+
+      <!-- Primary nav links — labels wired to radio inputs -->
+      <nav class="sidebar__nav">
+        <ul role="list">
+          <li class="nav-item" id="navitem-overview">
+            <label
+              for="nav-overview"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Overview"
+            >
+              <span class="nav-icon" aria-hidden="true">◈</span>
+              <span class="nav-label">Overview</span>
+              <span class="nav-badge" aria-label="3 alerts">3</span>
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-models">
+            <label
+              for="nav-models"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Models"
+            >
+              <span class="nav-icon" aria-hidden="true">◉</span>
+              <span class="nav-label">Models</span>
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-telemetry">
+            <label
+              for="nav-telemetry"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Telemetry"
+            >
+              <span class="nav-icon" aria-hidden="true">▦</span>
+              <span class="nav-label">Telemetry</span>
+              <span class="nav-badge nav-badge--warn" aria-label="1 warning"
+                >1</span
+              >
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-deployments">
+            <label
+              for="nav-deployments"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Deployments"
+            >
+              <span class="nav-icon" aria-hidden="true">⬡</span>
+              <span class="nav-label">Deployments</span>
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-logs">
+            <label
+              for="nav-logs"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Logs"
+            >
+              <span class="nav-icon" aria-hidden="true">◎</span>
+              <span class="nav-label">Logs</span>
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-incidents">
+            <label
+              for="nav-incidents"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Incidents"
+            >
+              <span class="nav-icon" aria-hidden="true">⊞</span>
+              <span class="nav-label">Incidents</span>
+            </label>
+          </li>
+
+          <li class="nav-item" id="navitem-settings">
+            <label
+              for="nav-settings"
+              class="nav-link"
+              role="button"
+              tabindex="0"
+              aria-label="Navigate to Settings"
+            >
+              <span class="nav-icon" aria-hidden="true">⚙</span>
+              <span class="nav-label">Settings</span>
+            </label>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- User profile summary -->
+      <div class="sidebar__profile" aria-label="User profile">
+        <div class="profile-avatar" aria-hidden="true">JD</div>
+        <div class="profile-info">
+          <span class="profile-name">Jane Doe</span>
+          <span class="profile-role">Principal Architect</span>
+        </div>
+        <span
+          class="profile-status-dot"
+          title="Online"
+          aria-label="Status: Online"
+        ></span>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════
+       MAIN CONTENT WRAPPER
+  ═══════════════════════════════════════════════ -->
+    <div class="main-wrapper">
+      <!-- TOP BAR ──────────────────────────────────── -->
+      <header class="topbar" role="banner">
+        <label
+          for="sidebar-toggle"
+          class="topbar__menu-btn"
+          aria-label="Open sidebar"
+        >
+          <span></span><span></span><span></span>
+        </label>
+
+        <!-- Global search -->
+        <div class="topbar__search" role="search">
+          <label for="global-search" class="visually-hidden"
+            >Search models, logs, incidents</label
+          >
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="global-search"
+            type="search"
+            class="search-input"
+            placeholder="Search models, logs, incidents…"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- System status pill -->
+        <div class="topbar__status" role="status" aria-live="polite">
+          <span class="status-pulse" aria-hidden="true"></span>
+          <span class="status-text">All Systems Operational</span>
+        </div>
+
+        <!-- Quick-action buttons -->
+        <div class="topbar__actions" role="toolbar" aria-label="Quick actions">
+          <button
+            class="action-btn"
+            type="button"
+            title="Refresh telemetry"
+            aria-label="Refresh telemetry"
+          >
+            ↺
+          </button>
+          <button
+            class="action-btn"
+            type="button"
+            title="Export report"
+            aria-label="Export report"
+          >
+            ⬇
+          </button>
+          <label
+            for="deploy-modal-toggle"
+            class="action-btn action-btn--primary"
+            role="button"
+            tabindex="0"
+            title="Deploy model"
+            aria-label="Open deploy model dialog"
+          >
+            + Deploy
+          </label>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT ─────────────────────────────── -->
+      <main class="page-content" id="main-content">
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: OVERVIEW (default)
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-overview"
+          role="tabpanel"
+          aria-labelledby="navitem-overview"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              AI Telemetry <span class="accent">&amp;</span> Operations
+            </h1>
+            <p class="page-subtitle">
+              Real-time monitoring · IBM Global AI Builders Challenge
+            </p>
+          </div>
+
+          <!-- KPI METRIC CARDS -->
+          <section class="kpi-grid" aria-label="Key Performance Indicators">
+            <article class="kpi-card kpi-card--blue" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon" aria-hidden="true">◉</span>
+                <span class="kpi-trend kpi-trend--up" aria-label="Trending up"
+                  >↑ 2.1%</span
+                >
+              </div>
+              <div
+                class="kpi-card__value"
+                aria-label="Active Models: 98.4 percent"
+              >
+                <span class="kpi-number">98.4</span
+                ><span class="kpi-unit">%</span>
+              </div>
+              <div class="kpi-card__label">Active Models</div>
+              <div
+                class="kpi-card__bar"
+                role="progressbar"
+                aria-valuenow="98"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div class="kpi-bar-fill" style="--fill: 98%"></div>
+              </div>
+            </article>
+
+            <article class="kpi-card kpi-card--green" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon" aria-hidden="true">⚡</span>
+                <span
+                  class="kpi-trend kpi-trend--down"
+                  aria-label="Trending down"
+                  >↓ 3ms</span
+                >
+              </div>
+              <div
+                class="kpi-card__value"
+                aria-label="Average Latency: 12 milliseconds"
+              >
+                <span class="kpi-number">12</span
+                ><span class="kpi-unit">ms</span>
+              </div>
+              <div class="kpi-card__label">Avg Latency</div>
+              <div
+                class="kpi-card__bar"
+                role="progressbar"
+                aria-valuenow="12"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div class="kpi-bar-fill" style="--fill: 12%"></div>
+              </div>
+            </article>
+
+            <article class="kpi-card kpi-card--warn" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon" aria-hidden="true">▦</span>
+                <span class="kpi-trend kpi-trend--up" aria-label="Trending up"
+                  >↑ 5%</span
+                >
+              </div>
+              <div
+                class="kpi-card__value"
+                aria-label="Compute Utilization: 74 percent"
+              >
+                <span class="kpi-number">74</span
+                ><span class="kpi-unit">%</span>
+              </div>
+              <div class="kpi-card__label">Compute Utilization</div>
+              <div
+                class="kpi-card__bar"
+                role="progressbar"
+                aria-valuenow="74"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div class="kpi-bar-fill" style="--fill: 74%"></div>
+              </div>
+            </article>
+
+            <article class="kpi-card kpi-card--success" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon" aria-hidden="true">◎</span>
+                <span
+                  class="kpi-trend kpi-trend--down"
+                  aria-label="Trending down"
+                  >↓ 0.01%</span
+                >
+              </div>
+              <div
+                class="kpi-card__value"
+                aria-label="Error Rate: 0.02 percent"
+              >
+                <span class="kpi-number">0.02</span
+                ><span class="kpi-unit">%</span>
+              </div>
+              <div class="kpi-card__label">Error Rate</div>
+              <div
+                class="kpi-card__bar"
+                role="progressbar"
+                aria-valuenow="2"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div class="kpi-bar-fill" style="--fill: 2%"></div>
+              </div>
+            </article>
+          </section>
+
+          <!-- ANALYTICS ROW: CHART + ALERTS -->
+          <div class="analytics-row">
+            <!-- TELEMETRY CHART -->
+            <section
+              class="panel chart-panel"
+              aria-label="Real-time telemetry chart"
+            >
+              <header class="panel__header">
+                <h2 class="panel__title">Telemetry — Live Signal Feed</h2>
+                <div
+                  class="panel__controls"
+                  role="group"
+                  aria-label="Chart range"
+                >
+                  <button class="chip chip--active" type="button">1H</button>
+                  <button class="chip" type="button">6H</button>
+                  <button class="chip" type="button">24H</button>
+                  <button class="chip" type="button">7D</button>
+                </div>
+              </header>
+
+              <div
+                class="chart"
+                role="img"
+                aria-label="Telemetry line chart showing model throughput and latency"
+              >
+                <div class="chart__y-axis" aria-hidden="true">
+                  <span>100</span><span>75</span><span>50</span><span>25</span
+                  ><span>0</span>
+                </div>
+                <div class="chart__plot">
+                  <div class="chart__grid" aria-hidden="true">
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                    <div class="grid-line"></div>
+                  </div>
+                  <svg
+                    class="chart__svg"
+                    viewBox="0 0 600 200"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <defs>
+                      <linearGradient
+                        id="grad-blue"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stop-color="#58A6FF"
+                          stop-opacity="0.35"
+                        />
+                        <stop
+                          offset="100%"
+                          stop-color="#58A6FF"
+                          stop-opacity="0.02"
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="grad-green"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stop-color="#3FB950"
+                          stop-opacity="0.25"
+                        />
+                        <stop
+                          offset="100%"
+                          stop-color="#3FB950"
+                          stop-opacity="0.02"
+                        />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      class="chart-area chart-area--blue"
+                      d="M0,60 C40,55 80,45 120,50 C160,55 200,35 240,30 C280,25 320,40 360,35 C400,30 440,20 480,25 C520,30 560,22 600,18 L600,200 L0,200 Z"
+                    />
+                    <path
+                      class="chart-line chart-line--blue"
+                      d="M0,60 C40,55 80,45 120,50 C160,55 200,35 240,30 C280,25 320,40 360,35 C400,30 440,20 480,25 C520,30 560,22 600,18"
+                    />
+                    <path
+                      class="chart-area chart-area--green"
+                      d="M0,130 C40,125 80,135 120,120 C160,105 200,115 240,110 C280,105 320,120 360,115 C400,110 440,100 480,105 C520,110 560,95 600,90 L600,200 L0,200 Z"
+                    />
+                    <path
+                      class="chart-line chart-line--green"
+                      d="M0,130 C40,125 80,135 120,120 C160,105 200,115 240,110 C280,105 320,120 360,115 C400,110 440,100 480,105 C520,110 560,95 600,90"
+                    />
+                    <g class="chart-dots" aria-hidden="true">
+                      <circle
+                        class="chart-dot chart-dot--blue"
+                        cx="120"
+                        cy="50"
+                        r="4"
+                      >
+                        <title>Throughput: 84% · 02:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--blue"
+                        cx="240"
+                        cy="30"
+                        r="4"
+                      >
+                        <title>Throughput: 91% · 04:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--blue"
+                        cx="360"
+                        cy="35"
+                        r="4"
+                      >
+                        <title>Throughput: 89% · 06:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--blue"
+                        cx="480"
+                        cy="25"
+                        r="4"
+                      >
+                        <title>Throughput: 94% · 08:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--blue"
+                        cx="600"
+                        cy="18"
+                        r="4"
+                      >
+                        <title>Throughput: 97% · 10:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--green"
+                        cx="120"
+                        cy="120"
+                        r="4"
+                      >
+                        <title>Latency: 40ms · 02:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--green"
+                        cx="240"
+                        cy="110"
+                        r="4"
+                      >
+                        <title>Latency: 37ms · 04:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--green"
+                        cx="360"
+                        cy="115"
+                        r="4"
+                      >
+                        <title>Latency: 38ms · 06:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--green"
+                        cx="480"
+                        cy="105"
+                        r="4"
+                      >
+                        <title>Latency: 35ms · 08:00</title>
+                      </circle>
+                      <circle
+                        class="chart-dot chart-dot--green"
+                        cx="600"
+                        cy="90"
+                        r="4"
+                      >
+                        <title>Latency: 30ms · 10:00</title>
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+                <div class="chart__x-axis" aria-hidden="true">
+                  <span>00:00</span><span>02:00</span><span>04:00</span
+                  ><span>06:00</span><span>08:00</span><span>10:00</span>
+                </div>
+                <div class="chart__legend" aria-label="Chart legend">
+                  <span class="legend-item legend-item--blue">Throughput</span>
+                  <span class="legend-item legend-item--green">Latency</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- ALERT & INCIDENT WIDGET -->
+            <section
+              class="panel alerts-panel"
+              aria-label="Alerts and incidents"
+            >
+              <header class="panel__header">
+                <h2 class="panel__title">Alerts &amp; Incidents</h2>
+                <span
+                  class="panel__badge panel__badge--warn"
+                  aria-label="3 alerts"
+                  >3</span
+                >
+              </header>
+              <ol class="alert-list" role="list">
+                <li class="alert-card alert-card--critical" role="alert">
+                  <div
+                    class="alert-card__priority-bar"
+                    aria-hidden="true"
+                  ></div>
+                  <div class="alert-card__body">
+                    <div class="alert-card__top">
+                      <span class="badge badge--critical">CRITICAL</span>
+                      <time class="alert-time" datetime="2025-07-14T09:41:00Z"
+                        >09:41 UTC</time
+                      >
+                    </div>
+                    <p class="alert-title">
+                      Model <code>llm-prod-v3</code> — Inference timeout spike
+                    </p>
+                    <p class="alert-desc">
+                      P99 latency exceeded 500ms threshold for &gt;120s.
+                      Auto-remediation triggered.
+                    </p>
+                    <div class="alert-actions">
+                      <button class="alert-btn" type="button">
+                        Acknowledge
+                      </button>
+                      <button class="alert-btn alert-btn--ghost" type="button">
+                        View Trace
+                      </button>
+                    </div>
+                  </div>
+                </li>
+                <li class="alert-card alert-card--warning" role="alert">
+                  <div
+                    class="alert-card__priority-bar"
+                    aria-hidden="true"
+                  ></div>
+                  <div class="alert-card__body">
+                    <div class="alert-card__top">
+                      <span class="badge badge--warning">WARNING</span>
+                      <time class="alert-time" datetime="2025-07-14T09:35:00Z"
+                        >09:35 UTC</time
+                      >
+                    </div>
+                    <p class="alert-title">
+                      Compute cluster <code>gpu-pool-a2</code> — 74% utilization
+                    </p>
+                    <p class="alert-desc">
+                      Approaching auto-scale threshold (80%). Scaling plan
+                      queued.
+                    </p>
+                    <div class="alert-actions">
+                      <button class="alert-btn" type="button">Scale Now</button>
+                      <button class="alert-btn alert-btn--ghost" type="button">
+                        Details
+                      </button>
+                    </div>
+                  </div>
+                </li>
+                <li class="alert-card alert-card--info">
+                  <div
+                    class="alert-card__priority-bar"
+                    aria-hidden="true"
+                  ></div>
+                  <div class="alert-card__body">
+                    <div class="alert-card__top">
+                      <span class="badge badge--info">INFO</span>
+                      <time class="alert-time" datetime="2025-07-14T09:22:00Z"
+                        >09:22 UTC</time
+                      >
+                    </div>
+                    <p class="alert-title">
+                      Scheduled model retrain — <code>vision-clf-v7</code>
+                    </p>
+                    <p class="alert-desc">
+                      Retraining pipeline queued. Estimated completion: 02:15.
+                    </p>
+                    <div class="alert-actions">
+                      <button class="alert-btn alert-btn--ghost" type="button">
+                        View Pipeline
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+            </section>
+          </div>
+          <!-- /.analytics-row -->
+
+          <!-- LIVE LOG FEED TABLE -->
+          <section class="panel log-panel" aria-label="Live log feed">
+            <header class="panel__header">
+              <h2 class="panel__title">Live Log Feed</h2>
+              <div class="panel__controls">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span class="live-label" aria-live="polite">Live</span>
+              </div>
+            </header>
+            <div
+              class="log-table-wrapper"
+              role="region"
+              aria-label="Scrollable log table"
+              tabindex="0"
+            >
+              <table class="log-table">
+                <caption class="visually-hidden">
+                  Real-time model inference log entries
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Model ID</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Latency</th>
+                    <th scope="col">Tokens/s</th>
+                    <th scope="col">Region</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="log-row log-row--deployed">
+                    <td>
+                      <time datetime="2025-07-14T09:42:15Z">09:42:15</time>
+                    </td>
+                    <td><code>ibm-granite-3.0-8b</code></td>
+                    <td>
+                      <span class="status-badge status-badge--deployed"
+                        >DEPLOYED</span
+                      >
+                    </td>
+                    <td>12 ms</td>
+                    <td>3,450</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:58Z">09:40:58</time>
+                    </td>
+                    <td><code>embed-base-v2</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>8 ms</td>
+                    <td>4,870</td>
+                    <td>eu-de</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:55Z">09:40:55</time>
+                    </td>
+                    <td><code>vision-clf-v7</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>21 ms</td>
+                    <td>2,310</td>
+                    <td>ap-tok</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:51Z">09:40:51</time>
+                    </td>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>
+                      <span class="status-badge status-badge--warn">WARN</span>
+                    </td>
+                    <td class="metric metric--warn">348 ms</td>
+                    <td>1,540</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:47Z">09:40:47</time>
+                    </td>
+                    <td><code>rag-chain-v1</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>14 ms</td>
+                    <td>3,920</td>
+                    <td>us-east</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:43Z">09:40:43</time>
+                    </td>
+                    <td><code>embed-base-v2</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>9 ms</td>
+                    <td>4,650</td>
+                    <td>eu-de</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:39Z">09:40:39</time>
+                    </td>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>11 ms</td>
+                    <td>2,980</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <time datetime="2025-07-14T09:40:35Z">09:40:35</time>
+                    </td>
+                    <td><code>vision-clf-v7</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>18 ms</td>
+                    <td>2,200</td>
+                    <td>ap-tok</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        <!-- /#panel-overview -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: MODELS
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-models"
+          role="tabpanel"
+          aria-labelledby="navitem-models"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              Model <span class="accent">Registry</span>
+            </h1>
+            <p class="page-subtitle">
+              Registered inference models · 12 active endpoints
+            </p>
+          </div>
+
+          <section class="panel" aria-label="Deployed models">
+            <header class="panel__header">
+              <h2 class="panel__title">Deployed Models</h2>
+              <span
+                class="panel__badge"
+                style="
+                  background: var(--color-blue-dim);
+                  color: var(--color-blue);
+                  border-color: rgba(88, 166, 255, 0.3);
+                "
+                >12 Active</span
+              >
+            </header>
+            <div class="log-table-wrapper" tabindex="0">
+              <table class="log-table">
+                <caption class="visually-hidden">
+                  Deployed model registry
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Model ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Version</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Endpoint</th>
+                    <th scope="col">Last Deploy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>LLM</td>
+                    <td>3.1.4</td>
+                    <td>
+                      <span class="status-badge status-badge--warn"
+                        >DEGRADED</span
+                      >
+                    </td>
+                    <td><code>api/v3/infer</code></td>
+                    <td>2025-07-12</td>
+                  </tr>
+                  <tr>
+                    <td><code>embed-base-v2</code></td>
+                    <td>Embedding</td>
+                    <td>2.0.1</td>
+                    <td>
+                      <span class="status-badge status-badge--ok">HEALTHY</span>
+                    </td>
+                    <td><code>api/v2/embed</code></td>
+                    <td>2025-07-10</td>
+                  </tr>
+                  <tr>
+                    <td><code>vision-clf-v7</code></td>
+                    <td>Vision</td>
+                    <td>7.3.0</td>
+                    <td>
+                      <span class="status-badge status-badge--ok">HEALTHY</span>
+                    </td>
+                    <td><code>api/v7/classify</code></td>
+                    <td>2025-07-08</td>
+                  </tr>
+                  <tr>
+                    <td><code>rag-chain-v1</code></td>
+                    <td>RAG</td>
+                    <td>1.2.0</td>
+                    <td>
+                      <span class="status-badge status-badge--ok">HEALTHY</span>
+                    </td>
+                    <td><code>api/v1/rag</code></td>
+                    <td>2025-07-07</td>
+                  </tr>
+                  <tr>
+                    <td><code>summarizer-v4</code></td>
+                    <td>NLP</td>
+                    <td>4.0.2</td>
+                    <td>
+                      <span class="status-badge status-badge--ok">HEALTHY</span>
+                    </td>
+                    <td><code>api/v4/summarize</code></td>
+                    <td>2025-07-05</td>
+                  </tr>
+                  <tr>
+                    <td><code>classifier-v9</code></td>
+                    <td>Classifier</td>
+                    <td>9.1.1</td>
+                    <td>
+                      <span class="status-badge status-badge--error"
+                        >OFFLINE</span
+                      >
+                    </td>
+                    <td><code>api/v9/classify</code></td>
+                    <td>2025-07-01</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Model KPI summary row -->
+          <div class="view-kpi-row">
+            <article class="kpi-card kpi-card--blue" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◉</span
+                ><span class="kpi-trend kpi-trend--up">↑ 1</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">12</span
+                ><span class="kpi-unit"> models</span>
+              </div>
+              <div class="kpi-card__label">Total Active</div>
+            </article>
+            <article class="kpi-card kpi-card--warn" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">▦</span
+                ><span class="kpi-trend kpi-trend--up">↑</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">1</span
+                ><span class="kpi-unit"> model</span>
+              </div>
+              <div class="kpi-card__label">Degraded</div>
+            </article>
+            <article class="kpi-card kpi-card--success" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◎</span
+                ><span class="kpi-trend kpi-trend--down">↓</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">1</span
+                ><span class="kpi-unit"> model</span>
+              </div>
+              <div class="kpi-card__label">Offline</div>
+            </article>
+            <article class="kpi-card kpi-card--green" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">⚡</span
+                ><span class="kpi-trend kpi-trend--down">↓</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">10</span
+                ><span class="kpi-unit"> models</span>
+              </div>
+              <div class="kpi-card__label">Healthy</div>
+            </article>
+          </div>
+        </div>
+        <!-- /#panel-models -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: TELEMETRY
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-telemetry"
+          role="tabpanel"
+          aria-labelledby="navitem-telemetry"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              Live <span class="accent">Telemetry</span>
+            </h1>
+            <p class="page-subtitle">
+              Streaming signal feed · 250ms refresh cadence
+            </p>
+          </div>
+
+          <section class="kpi-grid" aria-label="Telemetry KPIs">
+            <article class="kpi-card kpi-card--blue" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">⚡</span
+                ><span class="kpi-trend kpi-trend--down">↓ 3ms</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">12</span
+                ><span class="kpi-unit">ms</span>
+              </div>
+              <div class="kpi-card__label">P50 Latency</div>
+              <div class="kpi-card__bar">
+                <div class="kpi-bar-fill" style="--fill: 12%"></div>
+              </div>
+            </article>
+            <article class="kpi-card kpi-card--warn" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">▦</span
+                ><span class="kpi-trend kpi-trend--up">↑ 80ms</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">512</span
+                ><span class="kpi-unit">ms</span>
+              </div>
+              <div class="kpi-card__label">P99 Latency</div>
+              <div class="kpi-card__bar">
+                <div class="kpi-bar-fill" style="--fill: 60%"></div>
+              </div>
+            </article>
+            <article class="kpi-card kpi-card--green" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◉</span
+                ><span class="kpi-trend kpi-trend--up">↑ 240</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">8.4K</span>
+              </div>
+              <div class="kpi-card__label">Req / min</div>
+              <div class="kpi-card__bar">
+                <div class="kpi-bar-fill" style="--fill: 84%"></div>
+              </div>
+            </article>
+            <article class="kpi-card kpi-card--success" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◎</span
+                ><span class="kpi-trend kpi-trend--down">↓</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">99.8</span
+                ><span class="kpi-unit">%</span>
+              </div>
+              <div class="kpi-card__label">Uptime (30d)</div>
+              <div class="kpi-card__bar">
+                <div class="kpi-bar-fill" style="--fill: 99%"></div>
+              </div>
+            </article>
+          </section>
+
+          <section
+            class="panel chart-panel"
+            aria-label="Extended telemetry chart"
+          >
+            <header class="panel__header">
+              <h2 class="panel__title">Signal Feed — All Models</h2>
+              <div class="panel__controls">
+                <button class="chip chip--active" type="button">Live</button>
+                <button class="chip" type="button">1H</button>
+                <button class="chip" type="button">6H</button>
+              </div>
+            </header>
+            <div class="chart" role="img" aria-label="Telemetry chart">
+              <div class="chart__y-axis" aria-hidden="true">
+                <span>100</span><span>75</span><span>50</span><span>25</span
+                ><span>0</span>
+              </div>
+              <div class="chart__plot">
+                <div class="chart__grid" aria-hidden="true">
+                  <div class="grid-line"></div>
+                  <div class="grid-line"></div>
+                  <div class="grid-line"></div>
+                  <div class="grid-line"></div>
+                  <div class="grid-line"></div>
+                </div>
+                <svg
+                  class="chart__svg"
+                  viewBox="0 0 600 200"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient id="grad-blue2" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stop-color="#58A6FF"
+                        stop-opacity="0.35"
+                      />
+                      <stop
+                        offset="100%"
+                        stop-color="#58A6FF"
+                        stop-opacity="0.02"
+                      />
+                    </linearGradient>
+                    <linearGradient id="grad-warn" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stop-color="#D29922"
+                        stop-opacity="0.3"
+                      />
+                      <stop
+                        offset="100%"
+                        stop-color="#D29922"
+                        stop-opacity="0.02"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    class="chart-area chart-area--blue"
+                    style="fill: url(#grad-blue2)"
+                    d="M0,40 C50,38 100,30 150,35 C200,40 250,20 300,22 C350,24 400,15 450,18 C500,21 550,12 600,10 L600,200 L0,200 Z"
+                  />
+                  <path
+                    class="chart-line chart-line--blue"
+                    d="M0,40 C50,38 100,30 150,35 C200,40 250,20 300,22 C350,24 400,15 450,18 C500,21 550,12 600,10"
+                  />
+                  <path
+                    class="chart-area"
+                    style="fill: url(#grad-warn)"
+                    d="M0,160 C50,150 100,165 150,145 C200,125 250,135 300,130 C350,125 400,140 450,120 C500,100 550,115 600,105 L600,200 L0,200 Z"
+                  />
+                  <path
+                    class="chart-line"
+                    style="
+                      stroke: var(--color-warn);
+                      filter: drop-shadow(0 0 4px var(--color-warn));
+                    "
+                    d="M0,160 C50,150 100,165 150,145 C200,125 250,135 300,130 C350,125 400,140 450,120 C500,100 550,115 600,105"
+                  />
+                </svg>
+              </div>
+              <div class="chart__x-axis" aria-hidden="true">
+                <span>−60m</span><span>−48m</span><span>−36m</span
+                ><span>−24m</span><span>−12m</span><span>Now</span>
+              </div>
+              <div class="chart__legend" aria-label="Chart legend">
+                <span class="legend-item legend-item--blue">Throughput</span>
+                <span class="legend-item" style="color: var(--color-warn)">
+                  <span
+                    style="
+                      display: inline-block;
+                      width: 24px;
+                      height: 2px;
+                      background: var(--color-warn);
+                      vertical-align: middle;
+                      margin-right: 0.4rem;
+                      border-radius: 1px;
+                    "
+                  ></span>
+                  P99 Latency
+                </span>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- /#panel-telemetry -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: DEPLOYMENTS
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-deployments"
+          role="tabpanel"
+          aria-labelledby="navitem-deployments"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              Deployment <span class="accent">Pipeline</span>
+            </h1>
+            <p class="page-subtitle">
+              CI/CD stages · canary &amp; blue-green rollouts
+            </p>
+          </div>
+
+          <div class="view-kpi-row">
+            <article class="kpi-card kpi-card--green" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◉</span
+                ><span class="kpi-trend kpi-trend--up">↑ 2</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">7</span>
+              </div>
+              <div class="kpi-card__label">Deployments Today</div>
+            </article>
+            <article class="kpi-card kpi-card--blue" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">⬡</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">2</span>
+              </div>
+              <div class="kpi-card__label">In Progress</div>
+            </article>
+            <article class="kpi-card kpi-card--warn" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">▦</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">1</span>
+              </div>
+              <div class="kpi-card__label">Pending Approval</div>
+            </article>
+            <article class="kpi-card kpi-card--success" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◎</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">4</span>
+              </div>
+              <div class="kpi-card__label">Successful</div>
+            </article>
+          </div>
+
+          <section class="panel" aria-label="Deployment pipeline table">
+            <header class="panel__header">
+              <h2 class="panel__title">Active Pipelines</h2>
+            </header>
+            <div class="log-table-wrapper" tabindex="0">
+              <table class="log-table">
+                <caption class="visually-hidden">
+                  Active deployment pipelines
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Pipeline</th>
+                    <th scope="col">Model</th>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">Stage</th>
+                    <th scope="col">Progress</th>
+                    <th scope="col">Started</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>deploy-llm-v4</code></td>
+                    <td><code>llm-prod-v4</code></td>
+                    <td>Canary</td>
+                    <td>
+                      <span class="status-badge status-badge--warn"
+                        >STAGING</span
+                      >
+                    </td>
+                    <td>30%</td>
+                    <td>09:30 UTC</td>
+                  </tr>
+                  <tr>
+                    <td><code>deploy-embed-v3</code></td>
+                    <td><code>embed-base-v3</code></td>
+                    <td>Blue/Green</td>
+                    <td>
+                      <span class="status-badge status-badge--ok">TESTING</span>
+                    </td>
+                    <td>70%</td>
+                    <td>08:55 UTC</td>
+                  </tr>
+                  <tr>
+                    <td><code>deploy-vision-v8</code></td>
+                    <td><code>vision-clf-v8</code></td>
+                    <td>Rolling</td>
+                    <td>
+                      <span
+                        class="status-badge"
+                        style="
+                          background: rgba(188, 140, 255, 0.15);
+                          color: #bc8cff;
+                        "
+                        >APPROVAL</span
+                      >
+                    </td>
+                    <td>0%</td>
+                    <td>09:40 UTC</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        <!-- /#panel-deployments -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: LOGS
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-logs"
+          role="tabpanel"
+          aria-labelledby="navitem-logs"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              Inference <span class="accent">Logs</span>
+            </h1>
+            <p class="page-subtitle">
+              Full log stream · all models · all regions
+            </p>
+          </div>
+
+          <section class="panel log-panel" aria-label="Full inference log feed">
+            <header class="panel__header">
+              <h2 class="panel__title">Full Log Stream</h2>
+              <div class="panel__controls">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span class="live-label" aria-live="polite">Live</span>
+              </div>
+            </header>
+            <div
+              class="log-table-wrapper"
+              style="max-height: 520px"
+              tabindex="0"
+            >
+              <table class="log-table">
+                <caption class="visually-hidden">
+                  Full model inference log
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Model ID</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Latency</th>
+                    <th scope="col">Tokens/s</th>
+                    <th scope="col">Region</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="log-row log-row--deployed">
+                    <td>
+                      <time datetime="2025-07-14T09:42:15Z">09:42:15</time>
+                    </td>
+                    <td><code>ibm-granite-3.0-8b</code></td>
+                    <td>
+                      <span class="status-badge status-badge--deployed"
+                        >DEPLOYED</span
+                      >
+                    </td>
+                    <td>12 ms</td>
+                    <td>3,450</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:58</time></td>
+                    <td><code>embed-base-v2</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>8 ms</td>
+                    <td>4,870</td>
+                    <td>eu-de</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:55</time></td>
+                    <td><code>vision-clf-v7</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>21 ms</td>
+                    <td>2,310</td>
+                    <td>ap-tok</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:51</time></td>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>
+                      <span class="status-badge status-badge--warn">WARN</span>
+                    </td>
+                    <td class="metric metric--warn">348 ms</td>
+                    <td>1,540</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:47</time></td>
+                    <td><code>rag-chain-v1</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>14 ms</td>
+                    <td>3,920</td>
+                    <td>us-east</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:43</time></td>
+                    <td><code>embed-base-v2</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>9 ms</td>
+                    <td>4,650</td>
+                    <td>eu-de</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:39</time></td>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>11 ms</td>
+                    <td>2,980</td>
+                    <td>us-south</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:35</time></td>
+                    <td><code>vision-clf-v7</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>18 ms</td>
+                    <td>2,200</td>
+                    <td>ap-tok</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:30</time></td>
+                    <td><code>summarizer-v4</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>34 ms</td>
+                    <td>1,870</td>
+                    <td>us-east</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:26</time></td>
+                    <td><code>rag-chain-v1</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>16 ms</td>
+                    <td>3,710</td>
+                    <td>eu-de</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:22</time></td>
+                    <td><code>embed-base-v2</code></td>
+                    <td>
+                      <span class="status-badge status-badge--ok">OK</span>
+                    </td>
+                    <td>7 ms</td>
+                    <td>5,020</td>
+                    <td>ap-tok</td>
+                  </tr>
+                  <tr>
+                    <td><time>09:40:18</time></td>
+                    <td><code>llm-prod-v3</code></td>
+                    <td>
+                      <span class="status-badge status-badge--warn">WARN</span>
+                    </td>
+                    <td class="metric metric--warn">290 ms</td>
+                    <td>1,900</td>
+                    <td>us-south</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        <!-- /#panel-logs -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: INCIDENTS
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-incidents"
+          role="tabpanel"
+          aria-labelledby="navitem-incidents"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              Incident <span class="accent">Management</span>
+            </h1>
+            <p class="page-subtitle">
+              Open incidents · SLA tracking · escalation paths
+            </p>
+          </div>
+
+          <div class="view-kpi-row">
+            <article
+              class="kpi-card kpi-card--blue"
+              tabindex="0"
+              style="
+                --card-accent: var(--color-error);
+                --card-glow: var(--color-error-dim);
+              "
+            >
+              <div class="kpi-card__header">
+                <span class="kpi-icon" style="color: var(--color-error)"
+                  >⊞</span
+                >
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">1</span>
+              </div>
+              <div class="kpi-card__label">Critical Open</div>
+            </article>
+            <article class="kpi-card kpi-card--warn" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">▦</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">2</span>
+              </div>
+              <div class="kpi-card__label">Warnings Active</div>
+            </article>
+            <article class="kpi-card kpi-card--green" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◉</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">14</span>
+              </div>
+              <div class="kpi-card__label">Resolved (7d)</div>
+            </article>
+            <article class="kpi-card kpi-card--success" tabindex="0">
+              <div class="kpi-card__header">
+                <span class="kpi-icon">◎</span>
+              </div>
+              <div class="kpi-card__value">
+                <span class="kpi-number">4.2</span
+                ><span class="kpi-unit">min</span>
+              </div>
+              <div class="kpi-card__label">Avg MTTR</div>
+            </article>
+          </div>
+
+          <section
+            class="panel alerts-panel"
+            style="overflow: visible"
+            aria-label="Incidents list"
+          >
+            <header class="panel__header">
+              <h2 class="panel__title">All Open Incidents</h2>
+              <span class="panel__badge panel__badge--warn">3 Open</span>
+            </header>
+            <ol class="alert-list" role="list">
+              <li class="alert-card alert-card--critical" role="alert">
+                <div class="alert-card__priority-bar"></div>
+                <div class="alert-card__body">
+                  <div class="alert-card__top">
+                    <span class="badge badge--critical"
+                      >CRITICAL — INC-2041</span
+                    >
+                    <time class="alert-time">09:41 UTC</time>
+                  </div>
+                  <p class="alert-title">
+                    Model <code>llm-prod-v3</code> — P99 latency breach
+                    (&gt;500ms)
+                  </p>
+                  <p class="alert-desc">
+                    Auto-remediation running. Assigned to: ops-team-a. SLA
+                    breach in 18 min.
+                  </p>
+                  <div class="alert-actions">
+                    <button class="alert-btn" type="button">
+                      Take Ownership
+                    </button>
+                    <button class="alert-btn alert-btn--ghost" type="button">
+                      Timeline
+                    </button>
+                    <button class="alert-btn alert-btn--ghost" type="button">
+                      Escalate
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li class="alert-card alert-card--warning" role="alert">
+                <div class="alert-card__priority-bar"></div>
+                <div class="alert-card__body">
+                  <div class="alert-card__top">
+                    <span class="badge badge--warning">WARNING — INC-2039</span>
+                    <time class="alert-time">09:35 UTC</time>
+                  </div>
+                  <p class="alert-title">
+                    GPU cluster <code>gpu-pool-a2</code> at 74% utilization
+                  </p>
+                  <p class="alert-desc">
+                    Auto-scale queued. Monitoring. SLA buffer: 40 min.
+                  </p>
+                  <div class="alert-actions">
+                    <button class="alert-btn" type="button">Scale Now</button>
+                    <button class="alert-btn alert-btn--ghost" type="button">
+                      Details
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li class="alert-card alert-card--info">
+                <div class="alert-card__priority-bar"></div>
+                <div class="alert-card__body">
+                  <div class="alert-card__top">
+                    <span class="badge badge--info">INFO — INC-2037</span>
+                    <time class="alert-time">09:22 UTC</time>
+                  </div>
+                  <p class="alert-title">
+                    Retrain pipeline <code>vision-clf-v7</code> queued
+                  </p>
+                  <p class="alert-desc">
+                    Estimated completion: 02:15. No user impact.
+                  </p>
+                  <div class="alert-actions">
+                    <button class="alert-btn alert-btn--ghost" type="button">
+                      View Pipeline
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          </section>
+        </div>
+        <!-- /#panel-incidents -->
+
+        <!-- ═══════════════════════════════════════════
+           TAB PANEL: SETTINGS
+      ═══════════════════════════════════════════ -->
+        <div
+          class="tab-panel"
+          id="panel-settings"
+          role="tabpanel"
+          aria-labelledby="navitem-settings"
+        >
+          <div class="page-heading">
+            <h1 class="page-title">
+              System <span class="accent">Settings</span>
+            </h1>
+            <p class="page-subtitle">
+              Platform configuration · alerting thresholds · API keys
+            </p>
+          </div>
+
+          <div class="settings-grid">
+            <section class="panel settings-panel" aria-label="Alert thresholds">
+              <header class="panel__header">
+                <h2 class="panel__title">Alert Thresholds</h2>
+              </header>
+              <div class="settings-body">
+                <dl class="settings-list">
+                  <div class="settings-row">
+                    <dt>P99 Latency Critical</dt>
+                    <dd>
+                      <span class="settings-value settings-value--warn"
+                        >500 ms</span
+                      >
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>P99 Latency Warning</dt>
+                    <dd><span class="settings-value">250 ms</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Error Rate Critical</dt>
+                    <dd>
+                      <span class="settings-value settings-value--error"
+                        >1.0 %</span
+                      >
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Compute Utilization Warn</dt>
+                    <dd>
+                      <span class="settings-value settings-value--warn"
+                        >80 %</span
+                      >
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Compute Utilization Critical</dt>
+                    <dd>
+                      <span class="settings-value settings-value--error"
+                        >95 %</span
+                      >
+                    </dd>
+                  </div>
+                </dl>
+                <button
+                  class="action-btn action-btn--primary"
+                  type="button"
+                  style="margin-top: 1rem"
+                >
+                  Edit Thresholds
+                </button>
+              </div>
+            </section>
+
+            <section
+              class="panel settings-panel"
+              aria-label="Platform configuration"
+            >
+              <header class="panel__header">
+                <h2 class="panel__title">Platform Config</h2>
+              </header>
+              <div class="settings-body">
+                <dl class="settings-list">
+                  <div class="settings-row">
+                    <dt>Environment</dt>
+                    <dd>
+                      <span class="status-badge status-badge--ok"
+                        >PRODUCTION</span
+                      >
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Region Primary</dt>
+                    <dd><span class="settings-value">us-south</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Log Retention</dt>
+                    <dd><span class="settings-value">90 days</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Refresh Interval</dt>
+                    <dd><span class="settings-value">250 ms</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Auto-scale Policy</dt>
+                    <dd><span class="settings-value">Enabled</span></dd>
+                  </div>
+                </dl>
+                <button
+                  class="action-btn"
+                  type="button"
+                  style="margin-top: 1rem"
+                >
+                  Edit Config
+                </button>
+              </div>
+            </section>
+
+            <section
+              class="panel settings-panel"
+              aria-label="API key management"
+            >
+              <header class="panel__header">
+                <h2 class="panel__title">API Keys</h2>
+              </header>
+              <div class="settings-body">
+                <dl class="settings-list">
+                  <div class="settings-row">
+                    <dt>Inference API</dt>
+                    <dd>
+                      <code class="settings-key">ibm-sk-••••••••7a3f</code>
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Monitoring API</dt>
+                    <dd>
+                      <code class="settings-key">ibm-sk-••••••••b91c</code>
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Deploy Token</dt>
+                    <dd><code class="settings-key">dep-••••••••2d4e</code></dd>
+                  </div>
+                </dl>
+                <button
+                  class="action-btn action-btn--primary"
+                  type="button"
+                  style="margin-top: 1rem"
+                >
+                  Rotate Keys
+                </button>
+              </div>
+            </section>
+
+            <section class="panel settings-panel" aria-label="User account">
+              <header class="panel__header">
+                <h2 class="panel__title">Account</h2>
+              </header>
+              <div class="settings-body" style="align-items: center; gap: 1rem">
+                <div
+                  class="profile-avatar"
+                  style="
+                    width: 52px;
+                    height: 52px;
+                    font-size: 1rem;
+                    margin: 0 auto;
+                  "
+                >
+                  JD
+                </div>
+                <dl class="settings-list" style="width: 100%">
+                  <div class="settings-row">
+                    <dt>Name</dt>
+                    <dd><span class="settings-value">Jane Doe</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Role</dt>
+                    <dd>
+                      <span class="settings-value">Principal Architect</span>
+                    </dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>Org</dt>
+                    <dd><span class="settings-value">IBM Research</span></dd>
+                  </div>
+                  <div class="settings-row">
+                    <dt>MFA</dt>
+                    <dd>
+                      <span class="status-badge status-badge--ok">Enabled</span>
+                    </dd>
+                  </div>
+                </dl>
+                <button
+                  class="action-btn"
+                  type="button"
+                  style="margin-top: 1rem; width: 100%"
+                >
+                  Edit Profile
+                </button>
+              </div>
+            </section>
+          </div>
+          <!-- /.settings-grid -->
+        </div>
+        <!-- /#panel-settings -->
+      </main>
+
+      <footer class="page-footer" role="contentinfo">
+        <span>IBM AI Telemetry &amp; Ops Dashboard</span>
+        <span class="footer-sep" aria-hidden="true">·</span>
+        <span>IBM Global AI Builders Challenge 2025</span>
+        <span class="footer-sep" aria-hidden="true">·</span>
+        <span>v2.0.0</span>
+      </footer>
+    </div>
+    <!-- /.main-wrapper -->
+    <!-- ═══════════════════════════════════════════════
+       DEPLOY MODAL OVERLAY (CSS-only — shown via checkbox)
+  ═══════════════════════════════════════════════ -->
+    <div
+      class="modal-overlay"
+      id="deploy-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <!-- Backdrop — clicking it closes the modal -->
+      <label
+        for="deploy-modal-toggle"
+        class="modal-backdrop"
+        aria-label="Close deploy modal"
+      ></label>
+
+      <!-- Modal window -->
+      <div class="modal-window">
+        <!-- Modal header -->
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-title">
+            <span class="modal-title-icon" aria-hidden="true">⬡</span>
+            Deploy New AI Model
+          </h2>
+          <label
+            for="deploy-modal-toggle"
+            class="modal-close-btn"
+            role="button"
+            tabindex="0"
+            aria-label="Close dialog"
+            >✕</label
+          >
+        </div>
+
+        <!-- Modal body / form -->
+        <form class="modal-form" action="#" method="post">
+          <!-- Model Name -->
+          <div class="form-group">
+            <label class="form-label" for="deploy-model-name">
+              Model Name
+              <span class="form-required" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="deploy-model-name"
+              type="text"
+              class="form-input"
+              placeholder="e.g. llm-prod-v4"
+              autocomplete="off"
+              required
+            />
+            <span class="form-hint"
+              >Alphanumeric, hyphens allowed. Max 64 chars.</span
+            >
+          </div>
+
+          <!-- Environment -->
+          <div class="form-group">
+            <label class="form-label" for="deploy-environment">
+              Environment
+              <span class="form-required" aria-hidden="true">*</span>
+            </label>
+            <div class="form-select-wrapper">
+              <select id="deploy-environment" class="form-select" required>
+                <option value="" disabled selected>Select environment…</option>
+                <option value="production">Production</option>
+                <option value="staging">Staging</option>
+                <option value="dev">Development</option>
+              </select>
+              <span class="form-select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+
+          <!-- Instance Size -->
+          <div class="form-group">
+            <label class="form-label" for="deploy-instance-size">
+              Instance Size
+              <span class="form-required" aria-hidden="true">*</span>
+            </label>
+            <div class="form-select-wrapper">
+              <select id="deploy-instance-size" class="form-select" required>
+                <option value="" disabled selected>
+                  Select instance size…
+                </option>
+                <option value="small">Small (2 vCPU, 8GB)</option>
+                <option value="medium">Medium (4 vCPU, 16GB)</option>
+                <option value="large">Large (8 vCPU, 32GB)</option>
+                <option value="gpu">GPU Cluster (A100 x 4)</option>
+              </select>
+              <span class="form-select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+
+          <!-- Deployment Strategy -->
+          <div class="form-group">
+            <label class="form-label" for="deploy-strategy">
+              Deployment Strategy
+            </label>
+            <div class="form-select-wrapper">
+              <select id="deploy-strategy" class="form-select">
+                <option value="canary">Canary (gradual rollout)</option>
+                <option value="blue-green">Blue / Green</option>
+                <option value="rolling">Rolling update</option>
+                <option value="recreate">Recreate (full restart)</option>
+              </select>
+              <span class="form-select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+
+          <!-- Modal footer / actions -->
+          <div class="modal-footer">
+            <label
+              for="deploy-modal-toggle"
+              class="modal-cancel-btn"
+              role="button"
+              tabindex="0"
+              >Cancel</label
+            >
+            <!-- "Start Deployment" checks #toast-toggle (shows toast)
+                 CSS rule also hides the modal when #toast-toggle is :checked -->
+            <label
+              for="toast-toggle"
+              class="modal-submit-btn"
+              role="button"
+              tabindex="0"
+              aria-label="Start deployment and close modal"
+            >
+              <span aria-hidden="true">⬡</span> Start Deployment
+            </label>
+          </div>
+        </form>
+      </div>
+      <!-- /.modal-window -->
+    </div>
+    <!-- /.modal-overlay -->
+
+    <!-- ═══════════════════════════════════════════════
+       SUCCESS TOAST NOTIFICATION (CSS-only)
+       Shown when #toast-toggle is :checked.
+       Auto-dismisses via keyframe animation.
+  ═══════════════════════════════════════════════ -->
+    <div
+      class="toast-container"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <div class="toast toast--success" id="deploy-toast">
+        <span class="toast__icon" aria-hidden="true">🚀</span>
+        <div class="toast__body">
+          <span class="toast__title">Deployment Initiated</span>
+          <span class="toast__message">New model instance spinning up…</span>
+        </div>
+        <!-- Click toast to dismiss manually -->
+        <label
+          for="toast-toggle"
+          class="toast__dismiss"
+          role="button"
+          tabindex="0"
+          aria-label="Dismiss notification"
+          >✕</label
+        >
+      </div>
+    </div>
+  </body>
+</html>
